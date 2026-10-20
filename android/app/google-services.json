@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "765113326450",
+    "project_id": "veyra-951ad",
+    "storage_bucket": "veyra-951ad.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765113326450:android:7fdd676223460e1b13dbeb",
+        "android_client_info": {
+          "package_name": "com.irem.veyra"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQhRIRWpsmBD-RXHdhkB6hDpzKFd4ILLk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -20,4 +20,10 @@ abstract final class AppStrings {
   static const String signUp = 'Sign Up';
   static const String signIn = 'Sign In';
   static const String next = 'Next';
+
+  static const String navigationHome = 'Home';
+  static const String navigationSearch = 'Search';
+  static const String navigationCreate = 'Create';
+  static const String navigationNotifications = 'Notifications';
+  static const String navigationProfile = 'Profile';
 }

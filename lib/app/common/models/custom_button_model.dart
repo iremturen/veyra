@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/app_dimensions.dart';
+import '../constants/app_font_weight.dart';
 
 class CustomButtonModel {
   final String text;
@@ -15,6 +16,7 @@ class CustomButtonModel {
   final bool isLoading;
   final bool isEnabled;
   final EdgeInsetsGeometry? padding;
+  final AppFontWeight fontWeight;
 
   const CustomButtonModel({
     required this.text,
@@ -29,5 +31,6 @@ class CustomButtonModel {
     this.isLoading = false,
     this.isEnabled = true,
     this.padding,
+    this.fontWeight = AppFontWeight.bold,
   });
 }

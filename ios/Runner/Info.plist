@@ -16,6 +16,8 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>veyra</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Veyra needs access to your photos so you can create a post.</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

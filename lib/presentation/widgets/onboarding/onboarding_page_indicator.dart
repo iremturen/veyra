@@ -32,12 +32,8 @@ class OnboardingPageIndicator extends StatelessWidget {
               ? AppDimensions.onboardingIndicatorSelectedWidth
               : AppDimensions.onboardingIndicatorWidth,
           decoration: BoxDecoration(
-            color: currentPage == index
-                ? AppColors.primary
-                : AppColors.divider,
-            borderRadius: BorderRadius.circular(
-              AppDimensions.onboardingIndicatorBorderRadius,
-            ),
+            color: currentPage == index ? AppColors.primary : AppColors.divider,
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
           ),
         ),
       ),

@@ -6,13 +6,15 @@ class CustomNavigationBarModel {
     required this.items,
     required this.selectedIndex,
     required this.onDestinationSelected,
+    required this.onCreatePressed,
     this.backgroundColor,
     this.indicatorColor,
   });
 
   final List<CustomNavigationItemModel> items;
-  final int selectedIndex;
+  final int? selectedIndex;
   final ValueChanged<int> onDestinationSelected;
+  final VoidCallback onCreatePressed;
   final Color? backgroundColor;
   final Color? indicatorColor;
 }

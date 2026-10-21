@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_dimensions.dart';
 import '../models/custom_container_model.dart';
 
 class CustomContainer extends StatelessWidget {
@@ -17,7 +18,9 @@ class CustomContainer extends StatelessWidget {
       alignment: model.alignment,
       decoration: BoxDecoration(
         color: model.color,
-        borderRadius: model.borderRadius,
+        borderRadius:
+            model.borderRadius ??
+            BorderRadius.circular(AppDimensions.borderRadius),
         border: model.border,
       ),
       child: model.child,

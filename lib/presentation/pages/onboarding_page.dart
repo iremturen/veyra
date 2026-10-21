@@ -65,10 +65,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     controller: _pageController,
                     onPageChanged: context.read<OnboardingCubit>().changePage,
                     children: [
-                      for (final content in _pages)
+                      for (var index = 0; index < _pages.length; index++)
                         OnboardingIntroView(
-                          content: content,
-                          onNext: _nextPage,
+                          content: _pages[index],
+                          onGetStarted: index == _pages.length - 1
+                              ? _nextPage
+                              : null,
                         ),
                       const OnboardingWelcomeView(),
                     ],

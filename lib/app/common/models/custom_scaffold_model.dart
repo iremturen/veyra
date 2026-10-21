@@ -8,6 +8,7 @@ class CustomScaffoldModel {
   final Color? backgroundColor;
   final bool resizeToAvoidBottomInset;
   final bool safeArea;
+  final bool extendBody;
 
   const CustomScaffoldModel({
     required this.body,
@@ -17,5 +18,6 @@ class CustomScaffoldModel {
     this.backgroundColor,
     this.resizeToAvoidBottomInset = true,
     this.safeArea = false,
+    this.extendBody = false,
   });
 }

@@ -12,6 +12,7 @@ class CustomScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: model.appBar,
+      extendBody: model.extendBody,
       body: model.safeArea ? SafeArea(child: model.body) : model.body,
       bottomNavigationBar: model.bottomNavigationBar,
       floatingActionButton: model.floatingActionButton,

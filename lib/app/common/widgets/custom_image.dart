@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_dimensions.dart';
@@ -14,7 +14,9 @@ class CustomImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: model.borderRadius ?? BorderRadius.zero,
+      borderRadius:
+          model.borderRadius ??
+          BorderRadius.circular(AppDimensions.borderRadius),
       child: SizedBox(
         width: model.width,
         height: model.height,
@@ -32,9 +34,9 @@ class CustomImage extends StatelessWidget {
           if (progress == null) return child;
 
           return _buildPlaceholder(
-            child: const CircularProgressIndicator(
+            child: const CupertinoActivityIndicator(
+              radius: AppDimensions.customImageLoaderStrokeWidth * 2,
               color: AppColors.primary,
-              strokeWidth: AppDimensions.customImageLoaderStrokeWidth,
             ),
           );
         },
@@ -65,7 +67,7 @@ class CustomImage extends StatelessWidget {
             child ??
             CustomIcon(
               model: CustomIconModel(
-                icon: Icons.image_outlined,
+                icon: CupertinoIcons.photo,
                 size: model.iconSize,
                 color: AppColors.textSecondary,
               ),

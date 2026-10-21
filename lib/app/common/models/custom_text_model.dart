@@ -7,6 +7,7 @@ class CustomTextModel {
   final String text;
   final TextStyle? style;
   final AppFontSize? fontSize;
+  final String? fontFamily;
   final AppFontWeight? fontWeight;
   final TextAlign? textAlign;
   final int? maxLines;
@@ -16,6 +17,7 @@ class CustomTextModel {
     required this.text,
     this.style,
     this.fontSize,
+    this.fontFamily,
     this.fontWeight,
     this.textAlign,
     this.maxLines,

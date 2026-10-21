@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_dimensions.dart';
@@ -15,57 +15,71 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDisabled =
+    final disabled =
         !model.isEnabled || model.isLoading || model.onPressed == null;
+    final radius =
+        model.borderRadius ?? BorderRadius.circular(AppDimensions.borderRadius);
+    final foregroundColor = model.foregroundColor ?? CupertinoColors.white;
 
     return SizedBox(
       width: model.width,
       height: model.height,
-      child: ElevatedButton(
-        onPressed: isDisabled ? null : model.onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: model.backgroundColor ?? AppColors.primary,
-          foregroundColor: model.foregroundColor ?? Colors.white,
-          disabledBackgroundColor: (model.backgroundColor ?? AppColors.primary)
-              .withValues(alpha: AppDimensions.buttonDisabledOpacity),
-          shape: RoundedRectangleBorder(
-            borderRadius: model.borderRadius ??
-                BorderRadius.circular(AppDimensions.buttonBorderRadius),
-            side: model.border ?? BorderSide.none,
-          ),
-          padding: model.padding,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: disabled
+              ? (model.backgroundColor ?? AppColors.primary).withValues(
+                  alpha: AppDimensions.buttonDisabledOpacity,
+                )
+              : (model.backgroundColor ?? AppColors.primary),
+          borderRadius: radius.resolve(Directionality.of(context)),
+          border: model.border == null
+              ? null
+              : Border.fromBorderSide(model.border!),
         ),
-        child: model.isLoading
-            ? SizedBox(
-                width: AppDimensions.buttonLoaderSize,
-                height: AppDimensions.buttonLoaderSize,
-                child: CircularProgressIndicator(
-                  strokeWidth: AppDimensions.buttonLoaderStrokeWidth,
-                  color: model.foregroundColor ?? Colors.white,
-                ),
-              )
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (model.icon != null) ...[
-                    CustomIcon(
-                      model: CustomIconModel(
-                        icon: model.icon!,
-                        size: AppDimensions.buttonIconSize,
+        child: CupertinoButton(
+          onPressed: disabled ? null : model.onPressed,
+          color: const Color(0x00000000),
+          foregroundColor: foregroundColor,
+          disabledColor: const Color(0x00000000),
+          borderRadius: radius.resolve(Directionality.of(context)),
+          padding: model.padding ?? EdgeInsets.zero,
+          minimumSize: Size.zero,
+          pressedOpacity: 0.75,
+          child: model.isLoading
+              ? SizedBox(
+                  width: AppDimensions.buttonLoaderSize,
+                  height: AppDimensions.buttonLoaderSize,
+                  child: const CupertinoActivityIndicator(
+                    color: CupertinoColors.white,
+                  ),
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (model.icon != null)
+                      CustomIcon(
+                        model: CustomIconModel(
+                          icon: model.icon!,
+                          size: AppDimensions.buttonIconSize,
+                          color: foregroundColor,
+                        ),
+                      ),
+                    if (model.icon != null)
+                      const SizedBox(width: AppDimensions.spacingSmall),
+                    Flexible(
+                      child: CustomText(
+                        model: CustomTextModel(
+                          text: model.text,
+                          fontWeight: model.fontWeight,
+                          style: TextStyle(color: foregroundColor),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],
-                  Flexible(
-                    child: CustomText(
-                      model: CustomTextModel(
-                        text: model.text,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+        ),
       ),
     );
   }

@@ -1,5 +1,7 @@
 enum AppFontSize {
-  title(36),
+  compact(13),
+  regular(15),
+  title(30),
   small(16),
   medium(20),
   large(28);

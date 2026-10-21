@@ -11,6 +11,7 @@ class CustomAppBarModel {
   final Color? backgroundColor;
   final Color? foregroundColor;
   final double elevation;
+  final bool showBottomBorder;
 
   const CustomAppBarModel({
     this.title,
@@ -21,5 +22,6 @@ class CustomAppBarModel {
     this.backgroundColor,
     this.foregroundColor,
     this.elevation = AppDimensions.appBarElevation,
+    this.showBottomBorder = true,
   });
 }

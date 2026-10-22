@@ -42,14 +42,14 @@ class HomeFeedView extends StatelessWidget {
           ),
           FeedStatus.loaded => ListView.separated(
             padding: const EdgeInsets.only(
-              top: AppDimensions.spacingSmall,
+              top: AppDimensions.spacingMedium,
               bottom:
                   AppDimensions.navigationBarHeight +
                   AppDimensions.spacingLarge,
             ),
             itemCount: state.posts.length,
             separatorBuilder: (_, _) => const Divider(
-              height: AppDimensions.spacingLarge,
+              height: AppDimensions.spacingExtraLarge,
               color: AppColors.divider,
             ),
             itemBuilder: (context, index) => PostCard(post: state.posts[index]),

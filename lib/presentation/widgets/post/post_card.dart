@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:veyra/app/common/constants/app_colors.dart';
 import 'package:veyra/app/common/constants/app_dimensions.dart';
-import 'package:veyra/app/common/constants/app_font_size.dart';
-import 'package:veyra/app/common/models/custom_text_model.dart';
-import 'package:veyra/app/common/widgets/custom_text.dart';
 import 'package:veyra/domain/entities/feed_post.dart';
 import 'package:veyra/presentation/widgets/post/post_actions.dart';
 import 'package:veyra/presentation/widgets/post/post_header.dart';
@@ -17,6 +13,7 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: AppDimensions.spacingSmall,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         PostHeader(post: post),
@@ -24,17 +21,17 @@ class PostCard extends StatelessWidget {
         const PostActions(),
         if (post.caption.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppDimensions.spacingMedium,
-              0,
-              AppDimensions.spacingMedium,
-              AppDimensions.spacingSmall,
-            ),
-            child: CustomText(
-              model: CustomTextModel(
-                text: post.caption,
-                fontSize: AppFontSize.small,
-                style: const TextStyle(color: AppColors.textPrimary),
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacingMedium),
+            child: RichText(
+              text: TextSpan(
+                style: DefaultTextStyle.of(context).style,
+                children: [
+                  TextSpan(
+                    text: '${post.authorName} ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: post.caption),
+                ],
               ),
             ),
           ),

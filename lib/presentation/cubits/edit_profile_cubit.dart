@@ -191,6 +191,22 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
+      try {
+        final userPosts = await _firestore
+            .collection('posts')
+            .where('authorId', isEqualTo: user.uid)
+            .get();
+        if (userPosts.docs.isNotEmpty) {
+          final batch = _firestore.batch();
+          for (final doc in userPosts.docs) {
+            batch.update(doc.reference, {'authorPhotoUrl': downloadUrl});
+          }
+          await batch.commit();
+        }
+      } catch (e) {
+        debugPrint('Could not batch update authorPhotoUrl on existing posts: $e');
+      }
+
       if (!isClosed) {
         emit(
           state.copyWith(

@@ -9,6 +9,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   firebase_remote_config
   firebase_storage
+  gal
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

@@ -119,21 +119,36 @@ class CreatePostCubit extends Cubit<CreatePostState> {
       // 2. Get the image download URL.
       final imageUrl = await storageReference.getDownloadURL();
 
-      // 3. Determine the author's display name.
+      // 3. Determine the author's display name and photo.
       final displayName = user.displayName?.trim();
       final emailName = user.email?.split('@').first.trim();
 
-      final authorName = displayName?.isNotEmpty == true
+      var authorName = displayName?.isNotEmpty == true
           ? displayName!
           : emailName?.isNotEmpty == true
           ? emailName!
           : AppStrings.feedMemberFallback;
+      var authorPhotoUrl = user.photoURL?.trim();
+
+      try {
+        final userDoc =
+            await _firestore.collection('users').doc(user.uid).get();
+        final docData = userDoc.data();
+        final docPhoto = docData?['photoUrl'] as String?;
+        if (docPhoto?.trim().isNotEmpty == true) {
+          authorPhotoUrl = docPhoto!.trim();
+        }
+        final docUsername = docData?['username'] as String?;
+        if (docUsername?.trim().isNotEmpty == true) {
+          authorName = docUsername!.trim();
+        }
+      } catch (_) {}
 
       // 4. Save the post to Firestore.
       await postReference.set({
         'authorId': user.uid,
         'authorName': authorName,
-        'authorPhotoUrl': user.photoURL,
+        'authorPhotoUrl': authorPhotoUrl,
         'caption': caption.trim(),
         'imageUrl': imageUrl,
         'createdAt': FieldValue.serverTimestamp(),

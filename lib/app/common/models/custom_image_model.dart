@@ -8,10 +8,10 @@ class CustomImageModel {
   final String? assetPath;
   final double? width;
   final double? height;
-  final BoxFit fit;
+  final BoxFit? fit;
   final BorderRadiusGeometry? borderRadius;
   final Color? backgroundColor;
-  final double iconSize;
+  final double? iconSize;
 
   const CustomImageModel({
     this.imageUrl,

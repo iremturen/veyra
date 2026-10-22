@@ -49,6 +49,7 @@ class CrashlyticsTestPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(AppDimensions.spacingLarge),
             child: Column(
+              spacing: AppDimensions.spacingMedium,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const CustomText(
@@ -59,7 +60,6 @@ class CrashlyticsTestPage extends StatelessWidget {
                   ),
                 ),
                 if (kDebugMode) ...[
-                  const SizedBox(height: AppDimensions.spacingLarge),
                   CustomButton(
                     model: CustomButtonModel(
                       text: AppStrings.crashApp,

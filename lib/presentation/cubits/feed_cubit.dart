@@ -74,7 +74,9 @@ class FeedCubit extends Cubit<FeedState> {
                 createdAt: createdAt,
                 authorPhotoUrl:
                     stringValue('authorPhotoUrl') ??
-                    stringValue('profileImageUrl'),
+                    stringValue('photoUrl') ??
+                    stringValue('profileImageUrl') ??
+                    stringValue('userPhotoUrl'),
                 imageUrl: stringValue('imageUrl') ?? stringValue('mediaUrl'),
               );
             }).toList();

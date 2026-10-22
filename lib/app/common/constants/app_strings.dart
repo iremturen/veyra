@@ -130,5 +130,17 @@ abstract final class AppStrings {
   static const String postComment = 'Comment';
   static const String postShare = 'Share';
   static const String postSave = 'Save';
+  static const String downloadImage = 'Download Image';
+  static const String downloadingPhoto = 'Downloading image...';
+  static const String photoDownloaded = 'Image saved to gallery.';
+  static const String photoDownloadFailed =
+      'Could not download image. Please try again.';
+  static const String photoPermissionDenied =
+      'Photo library permission is required to save images.';
+  static const String storageFull = 'Not enough storage space on your device.';
+  static const String networkError =
+      'Network error. Please check your connection.';
+  static const String noImageToDownload = 'No image available to download.';
+  static const String cancel = 'Cancel';
   static const String retry = 'Retry';
 }

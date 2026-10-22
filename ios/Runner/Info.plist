@@ -30,6 +30,8 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Veyra needs access to your photos so you can create a post.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Veyra needs access to your photo library to save photos.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

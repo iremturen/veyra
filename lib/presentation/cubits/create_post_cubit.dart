@@ -62,7 +62,9 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         source: ImageSource.gallery,
         imageQuality: AppDimensions.createPostImageQuality,
       );
+
       if (isClosed || image == null) return;
+
       emit(CreatePostState(selectedImage: image));
     } catch (_) {
       if (!isClosed) {
@@ -78,9 +80,11 @@ class CreatePostCubit extends Cubit<CreatePostState> {
 
   Future<void> sharePost({required String caption}) async {
     final image = state.selectedImage;
+
     if (state.isLoading || image == null) return;
 
     final user = _auth.currentUser;
+
     if (user == null || !user.emailVerified) {
       emit(
         state.copyWith(
@@ -92,31 +96,40 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     }
 
     emit(state.copyWith(status: CreatePostStatus.loading));
+
     Reference? storageReference;
     var photoUploaded = false;
 
     try {
       final postReference = _firestore.collection('posts').doc();
       final extension = _fileExtension(image.name);
+
       storageReference = _storage.ref().child(
         'posts/${user.uid}/${postReference.id}.$extension',
       );
 
+      // 1. Upload the image to Firebase Storage.
       await storageReference.putFile(
         File(image.path),
         SettableMetadata(contentType: _contentType(extension)),
       );
-      final imageUrl = await storageReference.getDownloadURL();
+
       photoUploaded = true;
 
+      // 2. Get the image download URL.
+      final imageUrl = await storageReference.getDownloadURL();
+
+      // 3. Determine the author's display name.
       final displayName = user.displayName?.trim();
       final emailName = user.email?.split('@').first.trim();
+
       final authorName = displayName?.isNotEmpty == true
           ? displayName!
           : emailName?.isNotEmpty == true
           ? emailName!
           : AppStrings.feedMemberFallback;
 
+      // 4. Save the post to Firestore.
       await postReference.set({
         'authorId': user.uid,
         'authorName': authorName,
@@ -126,11 +139,15 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
+      // 5. Report success to the UI.
       if (!isClosed) {
         emit(state.copyWith(status: CreatePostStatus.success));
       }
     } on FirebaseException catch (_) {
-      await _removeUploadedPhoto(storageReference);
+      if (photoUploaded) {
+        await _removeUploadedPhoto(storageReference);
+      }
+
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -142,7 +159,10 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         );
       }
     } catch (_) {
-      await _removeUploadedPhoto(storageReference);
+      if (photoUploaded) {
+        await _removeUploadedPhoto(storageReference);
+      }
+
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -158,10 +178,11 @@ class CreatePostCubit extends Cubit<CreatePostState> {
 
   Future<void> _removeUploadedPhoto(Reference? reference) async {
     if (reference == null) return;
+
     try {
       await reference.delete();
-    } on FirebaseException catch (_) {
-      // Cleanup is best-effort; keep the original operation error.
+    } on FirebaseException {
+      // Cleanup can fail if Storage rules deny deletion.
     }
   }
 
@@ -169,7 +190,16 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     final extension = fileName.contains('.')
         ? fileName.split('.').last.toLowerCase()
         : 'jpg';
-    const supportedExtensions = {'jpg', 'jpeg', 'png', 'webp', 'heic', 'heif'};
+
+    const supportedExtensions = {
+      'jpg',
+      'jpeg',
+      'png',
+      'webp',
+      'heic',
+      'heif',
+    };
+
     return supportedExtensions.contains(extension) ? extension : 'jpg';
   }
 

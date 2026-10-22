@@ -81,7 +81,7 @@ class CustomTextField extends StatelessWidget {
                     ? null
                     : Padding(
                         padding: const EdgeInsets.only(
-                          right: AppDimensions.spacingSmall,
+                          right: AppDimensions.spacingMedium,
                         ),
                         child: model.suffixIcon,
                       ),

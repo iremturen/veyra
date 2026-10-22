@@ -8,10 +8,12 @@ import 'package:veyra/app/common/constants/app_font_size.dart';
 import 'package:veyra/app/common/constants/app_font_weight.dart';
 import 'package:veyra/app/common/constants/app_strings.dart';
 import 'package:veyra/app/common/models/custom_button_model.dart';
+import 'package:veyra/app/common/models/custom_app_bar_model.dart';
 import 'package:veyra/app/common/models/custom_scaffold_model.dart';
 import 'package:veyra/app/common/models/custom_text_field_model.dart';
 import 'package:veyra/app/common/models/custom_text_model.dart';
 import 'package:veyra/app/common/widgets/custom_button.dart';
+import 'package:veyra/app/common/widgets/custom_app_bar.dart';
 import 'package:veyra/app/common/widgets/custom_scaffold.dart';
 import 'package:veyra/app/common/widgets/custom_text.dart';
 import 'package:veyra/app/common/widgets/custom_text_field.dart';
@@ -74,197 +76,242 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             );
           } else if (state.status == AuthStatus.failure) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message!)));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: CustomText(
+                  model: CustomTextModel(
+                    text: state.message!,
+                    style: const TextStyle(color: Colors.white),
+                    fontSize: AppFontSize.small,
+                  ),
+                ),
+              ),
+            );
           }
         },
         builder: (context, authState) => CustomScaffold(
           model: CustomScaffoldModel(
+            appBar: CustomAppBar(
+              model: CustomAppBarModel(
+                leading: CupertinoButton(
+                  onPressed: () => Navigator.of(context).maybePop(),
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  child: const Icon(
+                    CupertinoIcons.back,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                automaticallyImplyLeading: false,
+                showBottomBorder: false,
+              ),
+            ),
             body: SafeArea(
               child: LayoutBuilder(
-                builder: (context, _) => SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppDimensions.spacingLarge),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: AppDimensions.authFormMaxWidth,
+                builder: (context, constraints) => ListView(
+                  padding: const EdgeInsets.all(
+                    AppDimensions.spacingExtraLarge,
+                  ),
+                  children: [
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight:
+                            constraints.maxHeight >
+                                AppDimensions.spacingExtraLarge * 2
+                            ? constraints.maxHeight -
+                                  AppDimensions.spacingExtraLarge * 2
+                            : 0,
                       ),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          spacing: AppDimensions.spacingLarge,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: CupertinoButton(
-                                onPressed: () =>
-                                    Navigator.of(context).maybePop(),
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size.zero,
-                                child: const Icon(
-                                  CupertinoIcons.back,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
-                            ),
-                            Column(
-                              spacing: AppDimensions.spacingSmall,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomText(
-                                  model: CustomTextModel(
-                                    text: AppStrings.createAccount,
-                                    style: const TextStyle(
-                                      color: AppColors.textPrimary,
-                                    ),
-                                    fontSize: AppFontSize.title,
-                                    fontWeight: AppFontWeight.bold,
-                                  ),
-                                ),
-                                CustomText(
-                                  model: CustomTextModel(
-                                    text: AppStrings.signUpSubtitle,
-                                    style: const TextStyle(
-                                      color: AppColors.textSecondary,
-                                    ),
-                                    fontSize: AppFontSize.small,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Column(
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxWidth: AppDimensions.authFormMaxWidth,
+                          ),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
                               spacing: AppDimensions.spacingMedium,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                CustomTextField(
-                                  model: CustomTextFieldModel(
-                                    controller: _emailController,
-                                    labelText: AppStrings.email,
-                                    hintText: AppStrings.emailHint,
-                                    keyboardType: TextInputType.emailAddress,
-                                    prefixIcon: CupertinoIcons.mail,
-                                    validator: _validateEmail,
+                                Column(
+                                  spacing: AppDimensions.spacingSmall,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CustomText(
+                                      model: CustomTextModel(
+                                        text: AppStrings.createAccount,
+                                        style: const TextStyle(
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        fontSize: AppFontSize.title,
+                                        fontWeight: AppFontWeight.bold,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    CustomText(
+                                      model: CustomTextModel(
+                                        text: AppStrings.signUpSubtitle,
+                                        style: const TextStyle(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                        fontSize: AppFontSize.small,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  spacing: AppDimensions.spacingMedium,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    CustomTextField(
+                                      model: CustomTextFieldModel(
+                                        controller: _emailController,
+                                        labelText: AppStrings.email,
+                                        hintText: AppStrings.emailHint,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                        prefixIcon: CupertinoIcons.mail,
+                                        validator: _validateEmail,
+                                      ),
+                                    ),
+                                    BlocBuilder<
+                                      PasswordVisibilityCubit,
+                                      PasswordVisibilityState
+                                    >(
+                                      builder: (context, visibilityState) =>
+                                          CustomTextField(
+                                            model: CustomTextFieldModel(
+                                              controller: _passwordController,
+                                              labelText: AppStrings.password,
+                                              hintText: AppStrings.passwordHint,
+                                              obscureText: !visibilityState
+                                                  .passwordVisible,
+                                              prefixIcon: CupertinoIcons.lock,
+                                              suffixIcon: CupertinoButton(
+                                                onPressed: context
+                                                    .read<
+                                                      PasswordVisibilityCubit
+                                                    >()
+                                                    .togglePasswordVisibility,
+                                                padding: EdgeInsets.zero,
+                                                minimumSize: Size.zero,
+                                                child: Icon(
+                                                  visibilityState
+                                                          .passwordVisible
+                                                      ? CupertinoIcons.eye_slash
+                                                      : CupertinoIcons.eye,
+                                                ),
+                                              ),
+                                              validator: _validatePassword,
+                                            ),
+                                          ),
+                                    ),
+                                    BlocBuilder<
+                                      PasswordVisibilityCubit,
+                                      PasswordVisibilityState
+                                    >(
+                                      builder: (context, visibilityState) =>
+                                          CustomTextField(
+                                            model: CustomTextFieldModel(
+                                              controller:
+                                                  _confirmPasswordController,
+                                              labelText:
+                                                  AppStrings.confirmPassword,
+                                              hintText: AppStrings
+                                                  .confirmPasswordHint,
+                                              obscureText: !visibilityState
+                                                  .confirmPasswordVisible,
+                                              prefixIcon: CupertinoIcons.lock,
+                                              suffixIcon: CupertinoButton(
+                                                onPressed: context
+                                                    .read<
+                                                      PasswordVisibilityCubit
+                                                    >()
+                                                    .toggleConfirmPasswordVisibility,
+                                                padding: EdgeInsets.zero,
+                                                minimumSize: Size.zero,
+                                                child: Icon(
+                                                  visibilityState
+                                                          .confirmPasswordVisible
+                                                      ? CupertinoIcons.eye_slash
+                                                      : CupertinoIcons.eye,
+                                                ),
+                                              ),
+                                              validator:
+                                                  _validateConfirmPassword,
+                                            ),
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: AppDimensions.spacingExtraLarge,
+                                  ),
+                                  child: CustomButton(
+                                    model: CustomButtonModel(
+                                      text: AppStrings.createAccount,
+                                      onPressed: _submit,
+                                      width: double.infinity,
+                                      height:
+                                          AppDimensions.authSubmitButtonHeight,
+                                      isLoading: authState.isLoading,
+                                      backgroundColor: AppColors.primary,
+                                      foregroundColor: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                        AppDimensions.borderRadius,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                BlocBuilder<
-                                  PasswordVisibilityCubit,
-                                  PasswordVisibilityState
-                                >(
-                                  builder: (context, visibilityState) =>
-                                      CustomTextField(
-                                        model: CustomTextFieldModel(
-                                          controller: _passwordController,
-                                          labelText: AppStrings.password,
-                                          hintText: AppStrings.passwordHint,
-                                          obscureText:
-                                              !visibilityState.passwordVisible,
-                                          prefixIcon: CupertinoIcons.lock,
-                                          suffixIcon: CupertinoButton(
-                                            onPressed: context
-                                                .read<PasswordVisibilityCubit>()
-                                                .togglePasswordVisibility,
-                                            padding: EdgeInsets.zero,
-                                            minimumSize: Size.zero,
-                                            child: Icon(
-                                              visibilityState.passwordVisible
-                                                  ? CupertinoIcons.eye_slash
-                                                  : CupertinoIcons.eye,
+                                Wrap(
+                                  spacing: AppDimensions.spacingSmall,
+                                  alignment: WrapAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    CustomText(
+                                      model: CustomTextModel(
+                                        text: AppStrings.alreadyHaveAccount,
+                                        style: const TextStyle(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                        fontSize: AppFontSize.small,
+                                      ),
+                                    ),
+                                    CupertinoButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pushReplacement(
+                                            CupertinoPageRoute<void>(
+                                              builder: (_) =>
+                                                  const SignInPage(),
                                             ),
                                           ),
-                                          validator: _validatePassword,
-                                        ),
-                                      ),
-                                ),
-                                BlocBuilder<
-                                  PasswordVisibilityCubit,
-                                  PasswordVisibilityState
-                                >(
-                                  builder: (context, visibilityState) =>
-                                      CustomTextField(
-                                        model: CustomTextFieldModel(
-                                          controller:
-                                              _confirmPasswordController,
-                                          labelText: AppStrings.confirmPassword,
-                                          hintText:
-                                              AppStrings.confirmPasswordHint,
-                                          obscureText: !visibilityState
-                                              .confirmPasswordVisible,
-                                          prefixIcon: CupertinoIcons.lock,
-                                          suffixIcon: CupertinoButton(
-                                            onPressed: context
-                                                .read<PasswordVisibilityCubit>()
-                                                .toggleConfirmPasswordVisibility,
-                                            padding: EdgeInsets.zero,
-                                            minimumSize: Size.zero,
-                                            child: Icon(
-                                              visibilityState
-                                                      .confirmPasswordVisible
-                                                  ? CupertinoIcons.eye_slash
-                                                  : CupertinoIcons.eye,
-                                            ),
+                                      padding: EdgeInsets.zero,
+                                      minimumSize: Size.zero,
+                                      child: CustomText(
+                                        model: CustomTextModel(
+                                          text: AppStrings.signIn,
+                                          style: const TextStyle(
+                                            color: AppColors.primary,
+                                            decoration:
+                                                TextDecoration.underline,
                                           ),
-                                          validator: _validateConfirmPassword,
+                                          fontSize: AppFontSize.small,
+                                          fontWeight: AppFontWeight.bold,
                                         ),
                                       ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                            CustomButton(
-                              model: CustomButtonModel(
-                                text: AppStrings.createAccount,
-                                onPressed: _submit,
-                                width: double.infinity,
-                                height: AppDimensions.authSubmitButtonHeight,
-                                isLoading: authState.isLoading,
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: Colors.white,
-                                borderRadius: BorderRadius.circular(
-                                  AppDimensions.borderRadius,
-                                ),
-                              ),
-                            ),
-                            Wrap(
-                              alignment: WrapAlignment.center,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                CustomText(
-                                  model: CustomTextModel(
-                                    text: AppStrings.alreadyHaveAccount,
-                                    style: const TextStyle(
-                                      color: AppColors.textSecondary,
-                                    ),
-                                    fontSize: AppFontSize.small,
-                                  ),
-                                ),
-                                CupertinoButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pushReplacement(
-                                        CupertinoPageRoute<void>(
-                                          builder: (_) => const SignInPage(),
-                                        ),
-                                      ),
-                                  padding: EdgeInsets.zero,
-                                  minimumSize: Size.zero,
-                                  child: CustomText(
-                                    model: CustomTextModel(
-                                      text: AppStrings.signIn,
-                                      style: const TextStyle(
-                                        color: AppColors.primary,
-                                      ),
-                                      fontSize: AppFontSize.small,
-                                      fontWeight: AppFontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),

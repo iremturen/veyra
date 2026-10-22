@@ -8,10 +8,12 @@ import 'package:veyra/app/common/constants/app_font_size.dart';
 import 'package:veyra/app/common/constants/app_font_weight.dart';
 import 'package:veyra/app/common/constants/app_strings.dart';
 import 'package:veyra/app/common/models/custom_button_model.dart';
+import 'package:veyra/app/common/models/custom_app_bar_model.dart';
 import 'package:veyra/app/common/models/custom_scaffold_model.dart';
 import 'package:veyra/app/common/models/custom_text_field_model.dart';
 import 'package:veyra/app/common/models/custom_text_model.dart';
 import 'package:veyra/app/common/widgets/custom_button.dart';
+import 'package:veyra/app/common/widgets/custom_app_bar.dart';
 import 'package:veyra/app/common/widgets/custom_scaffold.dart';
 import 'package:veyra/app/common/widgets/custom_text.dart';
 import 'package:veyra/app/common/widgets/custom_text_field.dart';
@@ -60,9 +62,17 @@ class _SignInPageState extends State<SignInPage> {
   Future<void> _resetPassword() async {
     final email = _emailController.text.trim();
     if (email.isEmpty || !_isValidEmail(email)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text(AppStrings.emailRequired)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: CustomText(
+            model: CustomTextModel(
+              text: AppStrings.emailRequired,
+              style: TextStyle(color: Colors.white),
+              fontSize: AppFontSize.small,
+            ),
+          ),
+        ),
+      );
       return;
     }
 
@@ -88,193 +98,251 @@ class _SignInPageState extends State<SignInPage> {
             );
           } else if (state.status == AuthStatus.passwordResetEmailSent) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text(AppStrings.resetEmailSent)),
+              const SnackBar(
+                content: CustomText(
+                  model: CustomTextModel(
+                    text: AppStrings.resetEmailSent,
+                    style: TextStyle(color: Colors.white),
+                    fontSize: AppFontSize.small,
+                  ),
+                ),
+              ),
             );
           } else if (state.status == AuthStatus.failure) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message!)));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: CustomText(
+                  model: CustomTextModel(
+                    text: state.message!,
+                    style: const TextStyle(color: Colors.white),
+                    fontSize: AppFontSize.small,
+                  ),
+                ),
+              ),
+            );
           }
         },
         builder: (context, authState) => CustomScaffold(
           model: CustomScaffoldModel(
+            appBar: CustomAppBar(
+              model: CustomAppBarModel(
+                leading: CupertinoButton(
+                  onPressed: () => Navigator.of(context).maybePop(),
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  child: const Icon(
+                    CupertinoIcons.back,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                automaticallyImplyLeading: false,
+                showBottomBorder: false,
+              ),
+            ),
             body: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppDimensions.spacingLarge),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: AppDimensions.authFormMaxWidth,
-                    ),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        spacing: AppDimensions.spacingMedium,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: CupertinoButton(
-                              onPressed: () => Navigator.of(context).maybePop(),
-                              padding: EdgeInsets.zero,
-                              minimumSize: Size.zero,
-                              child: const Icon(
-                                CupertinoIcons.back,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
+              child: LayoutBuilder(
+                builder: (context, constraints) => ListView(
+                  padding: const EdgeInsets.all(
+                    AppDimensions.spacingExtraLarge,
+                  ),
+                  children: [
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight:
+                            constraints.maxHeight >
+                                AppDimensions.spacingExtraLarge * 2
+                            ? constraints.maxHeight -
+                                  AppDimensions.spacingExtraLarge * 2
+                            : 0,
+                      ),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxWidth: AppDimensions.authFormMaxWidth,
                           ),
-                          Column(
-                            spacing: AppDimensions.spacingSmall,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomText(
-                                model: CustomTextModel(
-                                  text: AppStrings.welcomeBack,
-                                  style: const TextStyle(
-                                    color: AppColors.textPrimary,
-                                  ),
-                                  fontSize: AppFontSize.title,
-                                  fontWeight: AppFontWeight.bold,
-                                ),
-                              ),
-                              CustomText(
-                                model: CustomTextModel(
-                                  text: AppStrings.signInSubtitle,
-                                  style: const TextStyle(
-                                    color: AppColors.textSecondary,
-                                  ),
-                                  fontSize: AppFontSize.small,
-                                ),
-                              ),
-                            ],
-                          ),
-                          CustomTextField(
-                            model: CustomTextFieldModel(
-                              controller: _emailController,
-                              labelText: AppStrings.email,
-                              hintText: AppStrings.emailHint,
-                              keyboardType: TextInputType.emailAddress,
-                              prefixIcon: CupertinoIcons.mail,
-                              validator: _validateEmail,
-                            ),
-                          ),
-                          BlocBuilder<
-                            PasswordVisibilityCubit,
-                            PasswordVisibilityState
-                          >(
-                            builder: (context, visibilityState) =>
-                                CustomTextField(
-                                  model: CustomTextFieldModel(
-                                    controller: _passwordController,
-                                    labelText: AppStrings.password,
-                                    hintText: AppStrings.passwordHint,
-                                    obscureText:
-                                        !visibilityState.passwordVisible,
-                                    prefixIcon: CupertinoIcons.lock,
-                                    suffixIcon: CupertinoButton(
-                                      onPressed: context
-                                          .read<PasswordVisibilityCubit>()
-                                          .togglePasswordVisibility,
-                                      padding: EdgeInsets.zero,
-                                      minimumSize: Size.zero,
-                                      child: Icon(
-                                        visibilityState.passwordVisible
-                                            ? CupertinoIcons.eye_slash
-                                            : CupertinoIcons.eye,
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              spacing: AppDimensions.spacingMedium,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Column(
+                                  spacing: AppDimensions.spacingSmall,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CustomText(
+                                      model: CustomTextModel(
+                                        text: AppStrings.welcomeBack,
+                                        style: const TextStyle(
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        fontSize: AppFontSize.title,
+                                        fontWeight: AppFontWeight.bold,
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
-                                    validator: (value) =>
-                                        (value == null || value.isEmpty)
-                                        ? AppStrings.passwordRequired
-                                        : null,
-                                  ),
-                                ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: CupertinoButton(
-                              onPressed: _resetPassword,
-                              padding: EdgeInsets.zero,
-                              minimumSize: Size.zero,
-                              child: CustomText(
-                                model: CustomTextModel(
-                                  text: AppStrings.forgotPassword,
-                                  style: const TextStyle(
-                                    color: AppColors.primary,
-                                  ),
-                                  fontSize: AppFontSize.small,
-                                ),
-                              ),
-                            ),
-                          ),
-                          CustomButton(
-                            model: CustomButtonModel(
-                              text: AppStrings.signIn,
-                              onPressed: _submit,
-                              width: double.infinity,
-                              height: AppDimensions.authSubmitButtonHeight,
-                              isLoading: authState.isLoading,
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
-                              borderRadius: BorderRadius.circular(
-                                AppDimensions.borderRadius,
-                              ),
-                            ),
-                          ),
-                          Wrap(
-                            alignment: WrapAlignment.center,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              CustomText(
-                                model: CustomTextModel(
-                                  text: AppStrings.dontHaveAccount,
-                                  style: const TextStyle(
-                                    color: AppColors.textSecondary,
-                                  ),
-                                  fontSize: AppFontSize.small,
-                                ),
-                              ),
-                              CupertinoButton(
-                                onPressed: () => Navigator.of(context).push(
-                                  CupertinoPageRoute<void>(
-                                    builder: (_) => const RegisterPage(),
-                                  ),
-                                ),
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size.zero,
-                                child: CustomText(
-                                  model: CustomTextModel(
-                                    text: AppStrings.signUp,
-                                    style: const TextStyle(
-                                      color: AppColors.primary,
+                                    CustomText(
+                                      model: CustomTextModel(
+                                        text: AppStrings.signInSubtitle,
+                                        style: const TextStyle(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                        fontSize: AppFontSize.small,
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
-                                    fontSize: AppFontSize.small,
-                                    fontWeight: AppFontWeight.bold,
+                                  ],
+                                ),
+                                CustomTextField(
+                                  model: CustomTextFieldModel(
+                                    controller: _emailController,
+                                    labelText: AppStrings.email,
+                                    hintText: AppStrings.emailHint,
+                                    keyboardType: TextInputType.emailAddress,
+                                    prefixIcon: CupertinoIcons.mail,
+                                    validator: _validateEmail,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          if (kDebugMode)
-                            TextButton(
-                              onPressed: () => Navigator.of(context).push(
-                                CupertinoPageRoute<void>(
-                                  builder: (_) => const CrashlyticsTestPage(),
+                                BlocBuilder<
+                                  PasswordVisibilityCubit,
+                                  PasswordVisibilityState
+                                >(
+                                  builder: (context, visibilityState) =>
+                                      CustomTextField(
+                                        model: CustomTextFieldModel(
+                                          controller: _passwordController,
+                                          labelText: AppStrings.password,
+                                          hintText: AppStrings.passwordHint,
+                                          obscureText:
+                                              !visibilityState.passwordVisible,
+                                          prefixIcon: CupertinoIcons.lock,
+                                          suffixIcon: CupertinoButton(
+                                            onPressed: context
+                                                .read<PasswordVisibilityCubit>()
+                                                .togglePasswordVisibility,
+                                            padding: EdgeInsets.zero,
+                                            minimumSize: Size.zero,
+                                            child: Icon(
+                                              visibilityState.passwordVisible
+                                                  ? CupertinoIcons.eye_slash
+                                                  : CupertinoIcons.eye,
+                                            ),
+                                          ),
+                                          validator: (value) =>
+                                              (value == null || value.isEmpty)
+                                              ? AppStrings.passwordRequired
+                                              : null,
+                                        ),
+                                      ),
                                 ),
-                              ),
-                              style: TextButton.styleFrom(
-                                foregroundColor: AppColors.textSecondary,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: AppDimensions.spacingSmall,
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: CupertinoButton(
+                                    onPressed: _resetPassword,
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size.zero,
+                                    child: CustomText(
+                                      model: CustomTextModel(
+                                        text: AppStrings.forgotPassword,
+                                        style: const TextStyle(
+                                          color: AppColors.primary,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                        fontSize: AppFontSize.small,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              child: const Text(AppStrings.crashlyticsTest),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: AppDimensions.spacingExtraLarge,
+                                  ),
+                                  child: CustomButton(
+                                    model: CustomButtonModel(
+                                      text: AppStrings.signIn,
+                                      onPressed: _submit,
+                                      width: double.infinity,
+                                      height:
+                                          AppDimensions.authSubmitButtonHeight,
+                                      isLoading: authState.isLoading,
+                                      backgroundColor: AppColors.primary,
+                                      foregroundColor: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                        AppDimensions.borderRadius,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Wrap(
+                                  spacing: AppDimensions.spacingSmall,
+                                  alignment: WrapAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    CustomText(
+                                      model: CustomTextModel(
+                                        text: AppStrings.dontHaveAccount,
+                                        style: const TextStyle(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                        fontSize: AppFontSize.small,
+                                      ),
+                                    ),
+                                    CupertinoButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).push(
+                                            CupertinoPageRoute<void>(
+                                              builder: (_) =>
+                                                  const RegisterPage(),
+                                            ),
+                                          ),
+                                      padding: EdgeInsets.zero,
+                                      minimumSize: Size.zero,
+                                      child: CustomText(
+                                        model: CustomTextModel(
+                                          text: AppStrings.signUp,
+                                          style: const TextStyle(
+                                            color: AppColors.primary,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                          fontSize: AppFontSize.small,
+                                          fontWeight: AppFontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (kDebugMode)
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).push(
+                                      CupertinoPageRoute<void>(
+                                        builder: (_) =>
+                                            const CrashlyticsTestPage(),
+                                      ),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: AppColors.textSecondary,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: AppDimensions.spacingSmall,
+                                      ),
+                                    ),
+                                    child: CustomText(
+                                      model: CustomTextModel(
+                                        text: AppStrings.crashlyticsTest,
+                                        style: const TextStyle(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                        fontSize: AppFontSize.small,
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
-                        ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),

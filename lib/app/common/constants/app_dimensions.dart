@@ -4,6 +4,7 @@ abstract final class AppDimensions {
   static const double spacingSmall = 8;
   static const double spacingMedium = 16;
   static const double spacingLarge = 24;
+  static const double spacingExtraLarge = 28;
 
   static const double borderRadius = 16;
   static const double authFormMaxWidth = 440;
@@ -28,6 +29,8 @@ abstract final class AppDimensions {
   static const int onboardingIndicatorAnimationDurationMs = 250;
 
   static const int onboardingWelcomeAnimationDurationMs = 700;
+  static const double onboardingWelcomeLogoSize = 68;
+  static const double onboardingWelcomeLogoInitialScale = 2.4;
   static const double onboardingWelcomeSlideStartX = 0;
   static const double onboardingWelcomeSlideStartY = 0.4;
   static const double onboardingWelcomeFadeStart = 0.2;

@@ -43,6 +43,7 @@ dependencies:
   firebase_storage: ^14.0.0
   firebase_remote_config: ^7.0.0
   firebase_messaging: ^17.0.0
+  flutter_local_notifications: ^22.3.2
   firebase_crashlytics: ^6.0.0
   google_fonts: ^8.2.1
   liquid_glass_easy: ^5.0.0
@@ -69,6 +70,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/images/veyra_logo.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

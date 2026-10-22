@@ -2,6 +2,9 @@ abstract final class AppStrings {
   AppStrings._();
 
   static const String appName = 'Veyra';
+  static const String notificationChannelName = 'Veyra alerts';
+  static const String notificationChannelDescription =
+      'Important updates and activity from Veyra.';
   static const String customImageSourceAssertion =
       'Provide either imageUrl or assetPath, not both.';
 
@@ -19,6 +22,13 @@ abstract final class AppStrings {
 
   static const String signUp = 'Sign Up';
   static const String signIn = 'Sign In';
+  static const String continueWithGoogle = 'Continue with Google';
+  static const String continueWithApple = 'Continue with Apple';
+  static const String socialSignInDivider = 'OR';
+  static const String googleSignInUnavailable =
+      'Google sign-in is not configured yet.';
+  static const String appleSignInUnavailable =
+      'Apple sign-in is not configured yet.';
   static const String createAccount = 'Create your account';
   static const String signUpSubtitle = 'Join Veyra and find your people.';
   static const String welcomeBack = 'Welcome back';

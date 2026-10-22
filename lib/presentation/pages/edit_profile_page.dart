@@ -62,8 +62,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
         context,
       ).showSnackBar(const SnackBar(content: Text(AppStrings.profileSaved)));
       Navigator.of(context).pop();
-    } else if (state.status == EditProfileStatus.saveFailure &&
-        state.message != null) {
+    } else if (state.message != null &&
+        (state.status == EditProfileStatus.saveFailure ||
+            !state.isUploadingPhoto)) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(state.message!)));
@@ -75,6 +76,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return BlocProvider.value(
       value: _editProfileCubit,
       child: BlocConsumer<EditProfileCubit, EditProfileState>(
+        bloc: _editProfileCubit,
         listener: _handleState,
         builder: (context, state) => CustomScaffold(
           model: CustomScaffoldModel(
@@ -84,7 +86,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   model: CustomTextModel(
                     text: AppStrings.profileEdit,
                     fontSize: AppFontSize.medium,
-                    fontWeight: AppFontWeight.bold,
+                    fontWeight: AppFontWeight.normal,
                     style: TextStyle(color: AppColors.textPrimary),
                   ),
                 ),
@@ -113,9 +115,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: CustomButton(
                         model: CustomButtonModel(
                           text: AppStrings.saveChanges,
-                          onPressed: state.status == EditProfileStatus.saving
+                          onPressed: state.status == EditProfileStatus.saving ||
+                                  state.isUploadingPhoto
                               ? null
-                              : () => context.read<EditProfileCubit>().saveBio(
+                              : () => _editProfileCubit.saveBio(
                                   _bioController.text,
                                 ),
                           width: double.infinity,
@@ -161,7 +164,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               CustomButton(
                 model: CustomButtonModel(
                   text: AppStrings.retry,
-                  onPressed: context.read<EditProfileCubit>().loadProfile,
+                  onPressed: _editProfileCubit.loadProfile,
                   width: AppDimensions.authSubmitButtonHeight * 2,
                 ),
               ),
@@ -183,7 +186,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               spacing: AppDimensions.spacingLarge,
               children: [
-                _profilePhoto(),
+                _profilePhoto(state),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: AppDimensions.spacingSmall / 2,
@@ -250,12 +253,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         maxLines: AppDimensions.createPostCaptionMaxLines,
                         maxLength: AppDimensions.profileBioMaxLength,
                         enabled: state.status != EditProfileStatus.saving,
-                        onChanged: context.read<EditProfileCubit>().updateBio,
+                        onChanged: _editProfileCubit.updateBio,
                       ),
                     ),
                     Align(
                       alignment: Alignment.centerRight,
                       child: BlocBuilder<EditProfileCubit, EditProfileState>(
+                        bloc: _editProfileCubit,
                         builder: (context, bioState) => CustomText(
                           model: CustomTextModel(
                             text:
@@ -278,52 +282,88 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _profilePhoto() {
-    final photoUrl = _photoUrl?.trim();
-    final avatar = photoUrl?.isNotEmpty == true
-        ? CustomImage(
-            model: CustomImageModel(
-              imageUrl: photoUrl,
-              width: AppDimensions.profileAvatarSize,
-              height: AppDimensions.profileAvatarSize,
-              borderRadius: BorderRadius.circular(
-                AppDimensions.profileAvatarSize / 2,
-              ),
-            ),
-          )
-        : DecoratedBox(
-            decoration: const BoxDecoration(
-              color: AppColors.primarySoft,
-              shape: BoxShape.circle,
-            ),
-            child: SizedBox(
-              width: AppDimensions.profileAvatarSize,
-              height: AppDimensions.profileAvatarSize,
-              child: const CustomIcon(
-                model: CustomIconModel(
-                  icon: CupertinoIcons.person_fill,
-                  size: AppDimensions.profileAvatarSize / 2,
-                  color: AppColors.primary,
+  Widget _profilePhoto(EditProfileState state) {
+    final photoUrl = state.photoUrl?.trim() ?? _photoUrl?.trim();
+    final isUploading = state.isUploadingPhoto;
+
+    final avatar = Stack(
+      alignment: Alignment.center,
+      children: [
+        photoUrl?.isNotEmpty == true
+            ? CustomImage(
+                model: CustomImageModel(
+                  imageUrl: photoUrl,
+                  width: AppDimensions.profileAvatarSize,
+                  height: AppDimensions.profileAvatarSize,
+                  borderRadius: BorderRadius.circular(
+                    AppDimensions.profileAvatarSize / 2,
+                  ),
+                ),
+              )
+            : DecoratedBox(
+                decoration: const BoxDecoration(
+                  color: AppColors.primarySoft,
+                  shape: BoxShape.circle,
+                ),
+                child: SizedBox(
+                  width: AppDimensions.profileAvatarSize,
+                  height: AppDimensions.profileAvatarSize,
+                  child: const CustomIcon(
+                    model: CustomIconModel(
+                      icon: CupertinoIcons.person_fill,
+                      size: AppDimensions.profileAvatarSize / 2,
+                      color: AppColors.primary,
+                    ),
+                  ),
                 ),
               ),
+        if (isUploading)
+          Container(
+            width: AppDimensions.profileAvatarSize,
+            height: AppDimensions.profileAvatarSize,
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.35),
+              shape: BoxShape.circle,
             ),
-          );
+            child: const Center(
+              child: CupertinoActivityIndicator(
+                color: Colors.white,
+              ),
+            ),
+          ),
+      ],
+    );
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       spacing: AppDimensions.spacingSmall,
       children: [
-        Center(child: avatar),
+        Center(
+          child: GestureDetector(
+            onTap: isUploading || state.status == EditProfileStatus.saving
+                ? null
+                : _editProfileCubit.updateProfilePhoto,
+            child: avatar,
+          ),
+        ),
         CupertinoButton(
-          onPressed: null,
+          onPressed: isUploading || state.status == EditProfileStatus.saving
+              ? null
+              : _editProfileCubit.updateProfilePhoto,
           padding: EdgeInsets.zero,
           minimumSize: Size.zero,
-          child: const CustomText(
+          child: CustomText(
             model: CustomTextModel(
-              text: AppStrings.changeProfilePhoto,
+              text: isUploading
+                  ? AppStrings.uploadingPhoto
+                  : AppStrings.changeProfilePhoto,
               fontSize: AppFontSize.small,
               fontWeight: AppFontWeight.medium,
-              style: TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(
+                color: isUploading
+                    ? AppColors.textSecondary
+                    : AppColors.primary,
+              ),
             ),
           ),
         ),

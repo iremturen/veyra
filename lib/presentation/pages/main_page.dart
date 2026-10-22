@@ -24,10 +24,10 @@ import 'package:veyra/presentation/cubits/explore_banner_cubit.dart';
 import 'package:veyra/presentation/cubits/feed_cubit.dart';
 import 'package:veyra/presentation/cubits/main_cubit.dart';
 import 'package:veyra/presentation/pages/create_post_page.dart';
+import 'package:veyra/presentation/pages/explore_page.dart';
+import 'package:veyra/presentation/pages/notifications_page.dart';
 import 'package:veyra/presentation/pages/profile_page.dart';
 import 'package:veyra/presentation/pages/register_page.dart';
-import 'package:veyra/presentation/widgets/main/explore_search_bar.dart';
-import 'package:veyra/presentation/widgets/main/explore_banner.dart';
 import 'package:veyra/presentation/widgets/main/home_feed_view.dart';
 
 final _imagePicker = ImagePicker();
@@ -101,36 +101,37 @@ class _HomeView extends StatelessWidget {
             extendBody: true,
             appBar: CustomAppBar(
               model: CustomAppBarModel(
-                title: selectedIndex == 3
-                    ? null
-                    : CustomText(
+                title: selectedIndex == 0 || selectedIndex == 1
+                    ? CustomText(
                         model: CustomTextModel(
-                          text: selectedIndex == 0 || selectedIndex == 1
-                              ? AppStrings.appName
-                              : _tabTitle(selectedIndex),
+                          text: AppStrings.appName,
                           fontSize: AppFontSize.title,
                           fontWeight: AppFontWeight.bold,
-                          fontFamily: selectedIndex == 0 || selectedIndex == 1
-                              ? AppFontFamily.brand
-                              : AppFontFamily.body,
-                          style: TextStyle(
+                          fontFamily: AppFontFamily.brand,
+                          style: const TextStyle(
                             color: AppColors.primary,
-                            fontStyle: selectedIndex == 0 || selectedIndex == 1
-                                ? FontStyle.italic
-                                : FontStyle.normal,
+                            fontStyle: FontStyle.italic,
                           ),
+                        ),
+                      )
+                    : CustomText(
+                        model: CustomTextModel(
+                          text: _tabTitle(selectedIndex),
+                          fontSize: AppFontSize.medium,
+                          fontWeight: AppFontWeight.normal,
+                          style: const TextStyle(color: AppColors.textPrimary),
                         ),
                       ),
                 automaticallyImplyLeading: false,
-                showBottomBorder: selectedIndex != 3,
+                showBottomBorder: true,
               ),
             ),
             body: IndexedStack(
               index: selectedIndex,
               children: const [
                 HomeFeedView(),
-                _ExploreTab(),
-                _PlaceholderTab(label: AppStrings.navigationNotifications),
+                ExplorePage(),
+                NotificationsPage(),
                 ProfilePage(),
               ],
             ),
@@ -175,53 +176,4 @@ String _tabTitle(int tabIndex) {
   if (tabIndex == 1) return AppStrings.exploreTitle;
   if (tabIndex == 2) return AppStrings.navigationNotifications;
   return AppStrings.navigationProfile;
-}
-
-class _ExploreTab extends StatelessWidget {
-  const _ExploreTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.spacingMedium),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const ExploreSearchBar(),
-            BlocBuilder<ExploreBannerCubit, ExploreBannerState>(
-              builder: (context, state) => state.config.isHidden
-                  ? const SizedBox.shrink()
-                  : Padding(
-                      padding: const EdgeInsets.only(
-                        top: AppDimensions.spacingMedium,
-                      ),
-                      child: ExploreBanner(config: state.config),
-                    ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: CustomText(
-        model: CustomTextModel(
-          text: label,
-          fontSize: AppFontSize.medium,
-          style: const TextStyle(color: AppColors.textSecondary),
-        ),
-      ),
-    );
-  }
 }

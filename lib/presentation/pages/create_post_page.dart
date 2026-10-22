@@ -83,7 +83,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   model: CustomTextModel(
                     text: AppStrings.newPost,
                     fontSize: AppFontSize.medium,
-                    fontWeight: AppFontWeight.bold,
+                    fontWeight: AppFontWeight.normal,
                     style: TextStyle(color: AppColors.textPrimary),
                   ),
                 ),
@@ -91,7 +91,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   onPressed: () => Navigator.of(context).maybePop(),
                   padding: EdgeInsets.zero,
                   minimumSize: Size.zero,
-                  child: const Icon(CupertinoIcons.back),
+                  child: const Icon(
+                    CupertinoIcons.back,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
                 backgroundColor: AppColors.background,
                 automaticallyImplyLeading: false,

@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:veyra/app/common/constants/app_colors.dart';
 import 'package:veyra/app/common/constants/app_dimensions.dart';
 import 'package:veyra/app/common/constants/app_font_size.dart';
+import 'package:veyra/app/common/constants/app_font_weight.dart';
 import 'package:veyra/app/common/constants/app_strings.dart';
 import 'package:veyra/app/common/models/custom_app_bar_model.dart';
 import 'package:veyra/app/common/models/custom_scaffold_model.dart';
@@ -18,10 +19,25 @@ class SettingsPage extends StatelessWidget {
     return CustomScaffold(
       model: CustomScaffoldModel(
         appBar: CustomAppBar(
-          model: const CustomAppBarModel(
-            title: CustomText(
-              model: CustomTextModel(text: AppStrings.settings),
+          model: CustomAppBarModel(
+            title: const CustomText(
+              model: CustomTextModel(
+                text: AppStrings.settings,
+                fontSize: AppFontSize.medium,
+                fontWeight: AppFontWeight.normal,
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
             ),
+            leading: CupertinoButton(
+              onPressed: () => Navigator.of(context).maybePop(),
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              child: const Icon(
+                CupertinoIcons.back,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            automaticallyImplyLeading: false,
           ),
         ),
         body: const Center(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -153,116 +154,141 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayName = user.displayName?.trim();
-    final emailName = user.email?.split('@').first.trim();
-    final username = displayName?.isNotEmpty == true
-        ? displayName!
-        : emailName?.isNotEmpty == true
-        ? emailName!
-        : AppStrings.feedMemberFallback;
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        final data = snapshot.data?.data();
+        final bio = data?['bio'] as String?;
+        final firestorePhoto = data?['photoUrl'] as String?;
+        final photoUrl = firestorePhoto?.trim().isNotEmpty == true
+            ? firestorePhoto!.trim()
+            : user.photoURL;
+        final firestoreUsername = data?['username'] as String?;
+        final displayName = user.displayName?.trim();
+        final emailName = user.email?.split('@').first.trim();
+        final username = firestoreUsername?.trim().isNotEmpty == true
+            ? firestoreUsername!.trim()
+            : displayName?.isNotEmpty == true
+                ? displayName!
+                : emailName?.isNotEmpty == true
+                    ? emailName!
+                    : AppStrings.feedMemberFallback;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppDimensions.spacingMedium,
-        AppDimensions.spacingMedium,
-        AppDimensions.spacingMedium,
-        AppDimensions.spacingLarge,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: AppDimensions.spacingMedium,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: AppDimensions.spacingSmall,
-                  children: [
-                    _ProfileAvatar(photoUrl: user.photoURL),
-                    CustomText(
-                      model: CustomTextModel(
-                        text: username,
-                        fontSize: AppFontSize.regular,
-                        fontWeight: AppFontWeight.medium,
-                        style: const TextStyle(color: AppColors.textPrimary),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: _ProfileStat(
-                  value: '$postCount',
-                  label: AppStrings.profilePosts,
-                ),
-              ),
-              Expanded(
-                child: _ProfileStat(
-                  value: likeCount?.toString() ?? '—',
-                  label: AppStrings.profileLikes,
-                ),
-              ),
-            ],
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppDimensions.spacingMedium,
+            AppDimensions.spacingMedium,
+            AppDimensions.spacingMedium,
+            AppDimensions.spacingLarge,
           ),
-          CustomButton(
-            model: CustomButtonModel(
-              text: AppStrings.profileEdit,
-              onPressed: () => Navigator.of(context).push(
-                CupertinoPageRoute<void>(
-                  builder: (_) => const EditProfilePage(),
-                ),
-              ),
-              width: double.infinity,
-              height: AppDimensions.buttonHeight,
-              backgroundColor: AppColors.primarySoft,
-              foregroundColor: AppColors.primary,
-              border: BorderSide(
-                color: AppColors.primary.withValues(alpha: 0.12),
-              ),
-            ),
-          ),
-          Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             spacing: AppDimensions.spacingMedium,
             children: [
-              Expanded(
-                child: CustomButton(
-                  model: CustomButtonModel(
-                    text: AppStrings.settings,
-                    onPressed: () => Navigator.of(context).push(
-                      CupertinoPageRoute<void>(
-                        builder: (_) => const SettingsPage(),
-                      ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: AppDimensions.spacingSmall,
+                      children: [
+                        _ProfileAvatar(photoUrl: photoUrl),
+                        CustomText(
+                          model: CustomTextModel(
+                            text: username,
+                            fontSize: AppFontSize.regular,
+                            fontWeight: AppFontWeight.medium,
+                            style: const TextStyle(color: AppColors.textPrimary),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
-                    width: double.infinity,
-                    height: AppDimensions.buttonHeight,
-                    backgroundColor: AppColors.primarySoft,
-                    foregroundColor: AppColors.primary,
-                    icon: CupertinoIcons.gear,
+                  ),
+                  Expanded(
+                    child: _ProfileStat(
+                      value: '$postCount',
+                      label: AppStrings.profilePosts,
+                    ),
+                  ),
+                  Expanded(
+                    child: _ProfileStat(
+                      value: likeCount?.toString() ?? '—',
+                      label: AppStrings.profileLikes,
+                    ),
+                  ),
+                ],
+              ),
+              if (bio != null && bio.trim().isNotEmpty)
+                CustomText(
+                  model: CustomTextModel(
+                    text: bio.trim(),
+                    fontSize: AppFontSize.small,
+                    style: const TextStyle(color: AppColors.textPrimary),
+                  ),
+                ),
+              CustomButton(
+                model: CustomButtonModel(
+                  text: AppStrings.profileEdit,
+                  onPressed: () => Navigator.of(context).push(
+                    CupertinoPageRoute<void>(
+                      builder: (_) => const EditProfilePage(),
+                    ),
+                  ),
+                  width: double.infinity,
+                  height: AppDimensions.buttonHeight,
+                  backgroundColor: AppColors.primarySoft,
+                  foregroundColor: AppColors.primary,
+                  border: BorderSide(
+                    color: AppColors.primary.withValues(alpha: 0.12),
                   ),
                 ),
               ),
-              Expanded(
-                child: CustomButton(
-                  model: CustomButtonModel(
-                    text: AppStrings.logout,
-                    onPressed: () => context.read<AuthCubit>().signOut(),
-                    width: double.infinity,
-                    height: AppDimensions.buttonHeight,
-                    backgroundColor: AppColors.primarySoft,
-                    foregroundColor: AppColors.primary,
-                    icon: CupertinoIcons.square_arrow_left,
+              Row(
+                spacing: AppDimensions.spacingMedium,
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      model: CustomButtonModel(
+                        text: AppStrings.settings,
+                        onPressed: () => Navigator.of(context).push(
+                          CupertinoPageRoute<void>(
+                            builder: (_) => const SettingsPage(),
+                          ),
+                        ),
+                        width: double.infinity,
+                        height: AppDimensions.buttonHeight,
+                        backgroundColor: AppColors.primarySoft,
+                        foregroundColor: AppColors.primary,
+                        icon: CupertinoIcons.gear,
+                      ),
+                    ),
                   ),
-                ),
+                  Expanded(
+                    child: CustomButton(
+                      model: CustomButtonModel(
+                        text: AppStrings.logout,
+                        onPressed: () => context.read<AuthCubit>().signOut(),
+                        width: double.infinity,
+                        height: AppDimensions.buttonHeight,
+                        backgroundColor: AppColors.primarySoft,
+                        foregroundColor: AppColors.primary,
+                        icon: CupertinoIcons.square_arrow_left,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -74,11 +74,13 @@ abstract final class AppStrings {
   static const String exploreSearchHint = 'Search people and posts in Veyra';
   static const String exploreTitle = 'Explore';
   static const String exploreBannerDefaultTitle = 'Discover Your Community';
+  static const String exploreNoPosts = 'No posts yet';
   static const String navigationCreate = 'Create';
   static const String navigationNotifications = 'Notifications';
   static const String navigationProfile = 'Profile';
   static const String profileEdit = 'Edit Profile';
   static const String changeProfilePhoto = 'Change Profile Photo';
+  static const String uploadingPhoto = 'Uploading photo...';
   static const String username = 'Username';
   static const String profileUsernameUnavailable = 'Not available';
   static const String usernameCannotBeChanged = 'Username cannot be changed.';

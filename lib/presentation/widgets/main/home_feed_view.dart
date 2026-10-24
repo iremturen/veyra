@@ -9,7 +9,7 @@ import 'package:veyra/app/common/models/custom_button_model.dart';
 import 'package:veyra/app/common/models/custom_text_model.dart';
 import 'package:veyra/app/common/widgets/custom_button.dart';
 import 'package:veyra/app/common/widgets/custom_text.dart';
-import 'package:veyra/presentation/cubits/feed_cubit.dart';
+import 'package:veyra/presentation/cubits/feed/feed_cubit.dart';
 import 'package:veyra/presentation/widgets/post/post_card.dart';
 
 class HomeFeedView extends StatelessWidget {
@@ -22,17 +22,19 @@ class HomeFeedView extends StatelessWidget {
         return switch (state.status) {
           FeedStatus.initial || FeedStatus.loading => const Center(
             child: CupertinoActivityIndicator(
-              radius: 14,
+              radius: AppDimensions.activityIndicatorRadius,
               color: AppColors.primary,
             ),
           ),
           FeedStatus.failure => _FeedMessage(
-            message: AppStrings.feedLoadFailed,
+            message: state.errorMessage?.isNotEmpty == true
+                ? state.errorMessage!
+                : AppStrings.feedLoadFailed,
             action: CustomButton(
               model: CustomButtonModel(
                 text: AppStrings.retry,
                 onPressed: context.read<FeedCubit>().watchPosts,
-                width: 140,
+                width: AppDimensions.retryButtonWidth,
                 height: AppDimensions.buttonHeight,
               ),
             ),
@@ -41,6 +43,7 @@ class HomeFeedView extends StatelessWidget {
             message: AppStrings.feedEmpty,
           ),
           FeedStatus.loaded => ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.only(
               top: AppDimensions.spacingMedium,
               bottom:
@@ -83,7 +86,7 @@ class _FeedMessage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            ?action,
+            if (action != null) action!,
           ],
         ),
       ),

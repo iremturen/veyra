@@ -1,11 +1,14 @@
 abstract final class AppDimensions {
   AppDimensions._();
 
+  static const double spacingMicro = 2;
+  static const double spacingTiny = 4;
   static const double spacingSmall = 8;
   static const double spacingMedium = 16;
   static const double spacingLarge = 24;
   static const double spacingExtraLarge = 28;
 
+  static const double borderRadiusSmall = 6;
   static const double borderRadius = 16;
   static const double authFormMaxWidth = 440;
   static const double authSubmitButtonHeight = 56;
@@ -20,6 +23,7 @@ abstract final class AppDimensions {
   static const double customImagePlaceholderIconSize = 32;
   static const double customImageLoaderStrokeWidth = 2;
 
+  static const double onboardingTopPadding = 60;
   static const double onboardingBottomPadding = 80;
   static const int onboardingImageFlex = 6;
   static const double onboardingIndicatorHeight = 8;
@@ -63,4 +67,21 @@ abstract final class AppDimensions {
   static const int createPostCaptionMaxLines = 5;
   static const int createPostImageQuality = 90;
   static const double appBarElevation = 0;
+  static const double activityIndicatorRadius = 14;
+  static const double retryButtonWidth = 140;
+  static const double notificationAvatarSize = 44;
+  static const double notificationImageSize = 44;
+  static const double emptyStateIconSize = 54;
+  static const double bottomSheetDragHandleWidth = 36;
+  static const double bottomSheetDragHandleHeight = 4;
+  static const double bottomSheetHeightRatio = 0.75;
+  static const double commentAvatarSize = 36;
+  static const double commentInputAvatarSize = 34;
+  static const double borderWidthThin = 0.8;
+  static const double closeButtonSize = 28;
+  static const double closeButtonIconSize = 18;
+  static const double bottomSheetDragHandleRadius = 2;
+  static const double commentInputRadius = 20;
+  static const double commentEmptyStateIconSize = 48;
+  static const double activityIndicatorSmallRadius = 10;
 }

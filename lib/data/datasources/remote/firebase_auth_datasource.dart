@@ -4,7 +4,6 @@ import 'package:veyra/core/error/auth_failure_type.dart';
 import 'package:veyra/data/exceptions/auth_exception.dart';
 import 'package:veyra/domain/entities/auth_user.dart';
 
-/// Remote data source that talks directly to Firebase Authentication.
 class FirebaseAuthDataSource {
   final FirebaseAuth _firebaseAuth;
 

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_dimensions.dart';
+import '../constants/app_font_size.dart';
 import '../models/custom_icon_model.dart';
 import '../models/custom_text_field_model.dart';
 import 'custom_icon.dart';
@@ -109,7 +110,10 @@ class CustomTextField extends StatelessWidget {
                 ),
                 child: Text(
                   field.errorText!,
-                  style: const TextStyle(color: AppColors.error, fontSize: 12),
+                  style: TextStyle(
+                    color: AppColors.error,
+                    fontSize: AppFontSize.meta.value,
+                  ),
                 ),
               ),
           ],

@@ -71,7 +71,6 @@ abstract final class AppStrings {
 
   static const String navigationHome = 'Home';
   static const String navigationSearch = 'Search';
-  static const String exploreSearchHint = 'Search people and posts in Veyra';
   static const String exploreTitle = 'Explore';
   static const String exploreBannerDefaultTitle = 'Discover Your Community';
   static const String exploreNoPosts = 'No posts yet';
@@ -142,5 +141,27 @@ abstract final class AppStrings {
       'Network error. Please check your connection.';
   static const String noImageToDownload = 'No image available to download.';
   static const String cancel = 'Cancel';
+  static const String comments = 'Comments';
+  static const String viewComments = 'View comments';
+  static const String addCommentHint = 'Add a comment...';
+  static const String postAction = 'Post';
+  static const String noCommentsYet = 'No comments yet.';
+  static const String beFirstToComment = 'Be the first to share your thoughts.';
+  static const String commentsLoadFailed =
+      'Could not load comments. Please try again.';
+  static const String commentSubmitFailed =
+      'Could not post comment. Please try again.';
+  static const String commentSignInRequired =
+      'Please sign in and verify your email to comment.';
+  static const String likesCountSingular = 'like';
+  static const String likesCountPlural = 'likes';
+  static const String noNotificationsYet = 'No notifications yet';
+  static const String noNotificationsSubtitle =
+      'When people like or comment on your posts, you will see them here.';
+  static const String notificationsLoadFailed =
+      'Could not load notifications. Please try again.';
+  static const String likedYourPost = 'liked your post.';
+  static String commented(String text) => 'commented: "$text"';
   static const String retry = 'Retry';
+  static const String justNow = 'Just now';
 }

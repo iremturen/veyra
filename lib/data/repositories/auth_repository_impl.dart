@@ -6,7 +6,6 @@ import 'package:veyra/data/exceptions/auth_exception.dart';
 import 'package:veyra/domain/entities/auth_user.dart';
 import 'package:veyra/domain/repositories/auth_repository.dart';
 
-/// [AuthRepository] implementation backed by [FirebaseAuthDataSource].
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuthDataSource _dataSource;
 

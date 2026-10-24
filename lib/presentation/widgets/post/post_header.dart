@@ -8,13 +8,14 @@ import 'package:veyra/app/common/constants/app_font_size.dart';
 import 'package:veyra/app/common/constants/app_font_weight.dart';
 import 'package:veyra/app/common/constants/app_strings.dart';
 import 'package:veyra/app/common/models/custom_icon_model.dart';
-import 'package:veyra/app/common/models/custom_image_model.dart';
 import 'package:veyra/app/common/models/custom_text_model.dart';
 import 'package:veyra/app/common/widgets/custom_icon.dart';
-import 'package:veyra/app/common/widgets/custom_image.dart';
 import 'package:veyra/app/common/widgets/custom_text.dart';
+import 'package:veyra/core/extensions/date_time_extension.dart';
+import 'package:veyra/core/extensions/snack_bar_extension.dart';
 import 'package:veyra/data/services/media_download_service.dart';
 import 'package:veyra/domain/entities/feed_post.dart';
+import 'package:veyra/presentation/widgets/common/user_avatar.dart';
 
 class PostHeader extends StatelessWidget {
   const PostHeader({
@@ -80,7 +81,11 @@ class PostHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _avatar(photoUrl),
+          UserAvatar(
+            userId: post.authorId,
+            fallbackPhoto: photoUrl,
+            size: AppDimensions.postAvatarSize,
+          ),
           const SizedBox(width: AppDimensions.spacingSmall),
           Expanded(
             child: Column(
@@ -97,10 +102,10 @@ class PostHeader extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (post.createdAt != null)
+                if (post.createdAt case final createdAt?)
                   CustomText(
                     model: CustomTextModel(
-                      text: _formatDate(post.createdAt!),
+                      text: createdAt.timeAgo,
                       style: const TextStyle(color: AppColors.textSecondary),
                       maxLines: 1,
                     ),
@@ -144,9 +149,7 @@ class PostHeader extends StatelessWidget {
               if (hasImage) {
                 _downloadImage(context, imageUrl);
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text(AppStrings.noImageToDownload)),
-                );
+                context.showSnackBar(AppStrings.noImageToDownload);
               }
             },
             child: Row(
@@ -192,12 +195,9 @@ class PostHeader extends StatelessWidget {
 
   Future<void> _downloadImage(BuildContext context, String imageUrl) async {
     final messenger = ScaffoldMessenger.of(context);
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      const SnackBar(
-        content: Text(AppStrings.downloadingPhoto),
-        duration: Duration(seconds: 1),
-      ),
+    messenger.showSnackBarMessage(
+      AppStrings.downloadingPhoto,
+      duration: const Duration(seconds: 1),
     );
 
     final result = await mediaDownloadService.downloadAndSaveImage(imageUrl);
@@ -215,50 +215,7 @@ class PostHeader extends StatelessWidget {
         AppStrings.photoDownloadFailed,
     };
 
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
-
-  Widget _avatar(String? photoUrl) {
-    final url = photoUrl?.trim();
-    if (url == null || url.isEmpty) {
-      return DecoratedBox(
-        decoration: const BoxDecoration(
-          color: AppColors.primarySoft,
-          shape: BoxShape.circle,
-        ),
-        child: const SizedBox(
-          width: AppDimensions.postAvatarSize,
-          height: AppDimensions.postAvatarSize,
-          child: CustomIcon(
-            model: CustomIconModel(
-              icon: CupertinoIcons.person_fill,
-              size: AppDimensions.buttonIconSize,
-              color: AppColors.primary,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return CustomImage(
-      model: CustomImageModel(
-        imageUrl: url,
-        width: AppDimensions.postAvatarSize,
-        height: AppDimensions.postAvatarSize,
-        borderRadius: BorderRadius.circular(AppDimensions.postAvatarSize / 2),
-      ),
-    );
-  }
-
-  String _formatDate(DateTime value) {
-    final elapsed = DateTime.now().difference(value);
-    if (elapsed.inMinutes < 1) return 'Just now';
-    if (elapsed.inHours < 1) return '${elapsed.inMinutes}m';
-    if (elapsed.inDays < 1) return '${elapsed.inHours}h';
-    if (elapsed.inDays < 7) return '${elapsed.inDays}d';
-    return '${value.day}/${value.month}/${value.year}';
+    final isError = result != MediaDownloadResult.success;
+    messenger.showSnackBarMessage(message, isError: isError);
   }
 }

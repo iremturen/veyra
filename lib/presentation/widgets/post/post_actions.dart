@@ -6,7 +6,16 @@ import 'package:veyra/app/common/models/custom_icon_model.dart';
 import 'package:veyra/app/common/widgets/custom_icon.dart';
 
 class PostActions extends StatelessWidget {
-  const PostActions({super.key});
+  const PostActions({
+    this.isLiked = false,
+    this.onLikePressed,
+    this.onCommentPressed,
+    super.key,
+  });
+
+  final bool isLiked;
+  final VoidCallback? onLikePressed;
+  final VoidCallback? onCommentPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +27,16 @@ class PostActions extends StatelessWidget {
       child: Row(
         spacing: AppDimensions.spacingMedium,
         children: [
-          const _ActionIcon(
+          _ActionIcon(
             label: AppStrings.postLike,
-            icon: CupertinoIcons.heart,
+            icon: isLiked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+            color: isLiked ? AppColors.error : AppColors.textPrimary,
+            onPressed: onLikePressed,
           ),
-          const _ActionIcon(
+          _ActionIcon(
             label: AppStrings.postComment,
             icon: CupertinoIcons.chat_bubble,
+            onPressed: onCommentPressed,
           ),
           const _ActionIcon(
             label: AppStrings.postShare,
@@ -42,22 +54,38 @@ class PostActions extends StatelessWidget {
 }
 
 class _ActionIcon extends StatelessWidget {
-  const _ActionIcon({required this.label, required this.icon});
+  const _ActionIcon({
+    required this.label,
+    required this.icon,
+    this.color = AppColors.textPrimary,
+    this.onPressed,
+  });
 
   final String label;
   final IconData icon;
+  final Color color;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
+    final iconWidget = CustomIcon(
+      model: CustomIconModel(
+        icon: icon,
+        size: AppDimensions.postActionIconSize,
+        color: color,
+      ),
+    );
+
     return Semantics(
       label: label,
-      child: CustomIcon(
-        model: CustomIconModel(
-          icon: icon,
-          size: AppDimensions.postActionIconSize,
-          color: AppColors.textPrimary,
-        ),
-      ),
+      child: onPressed != null
+          ? CupertinoButton(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size.square(AppDimensions.postActionIconSize),
+              onPressed: onPressed,
+              child: iconWidget,
+            )
+          : iconWidget,
     );
   }
 }

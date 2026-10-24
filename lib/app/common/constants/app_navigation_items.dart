@@ -17,8 +17,8 @@ class AppNavigationItems {
     ),
     CustomNavigationItemModel(
       label: AppStrings.navigationNotifications,
-      icon: CupertinoIcons.heart,
-      selectedIcon: CupertinoIcons.heart_fill,
+      icon: CupertinoIcons.bell,
+      selectedIcon: CupertinoIcons.bell_fill,
     ),
     CustomNavigationItemModel(
       label: AppStrings.navigationProfile,

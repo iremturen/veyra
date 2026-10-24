@@ -37,80 +37,121 @@ class OnboardingIntroView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final imageHeight = (constraints.maxHeight * 0.48)
-              .clamp(180.0, 420.0)
-              .toDouble();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenHeight = constraints.maxHeight;
+        final imageHeight = (screenHeight * 0.55)
+            .clamp(280.0, 500.0)
+            .toDouble();
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(
-              AppDimensions.spacingLarge,
-              AppDimensions.spacingMedium,
-              AppDimensions.spacingLarge,
-              AppDimensions.onboardingBottomPadding,
-            ),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
-                spacing: AppDimensions.spacingMedium,
-                children: [
-                  CustomText(
-                    model: CustomTextModel(
-                      text: AppStrings.appName,
-                      style: const TextStyle(color: AppColors.primary),
-                      fontSize: AppFontSize.medium,
-                      fontWeight: AppFontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    height: imageHeight,
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: screenHeight),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ClipPath(
+                  clipper: const OnboardingWaveClipper(),
+                  child: SizedBox(
                     width: double.infinity,
+                    height: imageHeight,
                     child: CustomImage(
                       model: CustomImageModel(
                         imageUrl: content.imageUrl,
                         fit: BoxFit.cover,
-                        borderRadius: BorderRadius.circular(
-                          AppDimensions.borderRadius,
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppDimensions.spacingLarge,
+                    AppDimensions.onboardingTopPadding,
+                    AppDimensions.spacingLarge,
+                    AppDimensions.onboardingBottomPadding,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: AppDimensions.spacingMedium,
+                    children: [
+                      Center(
+                        child: CustomText(
+                          model: CustomTextModel(
+                            text: content.title,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              height: 1.25,
+                              letterSpacing: -0.5,
+                            ),
+                            fontSize: AppFontSize.title,
+                            fontWeight: AppFontWeight.bold,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  CustomText(
-                    model: CustomTextModel(
-                      text: content.title,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      fontSize: AppFontSize.large,
-                      fontWeight: AppFontWeight.bold,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  CustomText(
-                    model: CustomTextModel(
-                      text: content.description,
-                      style: const TextStyle(color: AppColors.textSecondary),
-                      fontSize: AppFontSize.medium,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  if (onGetStarted != null)
-                    CustomButton(
-                      model: CustomButtonModel(
-                        text: AppStrings.getStarted,
-                        onPressed: onGetStarted,
-                        width: double.infinity,
-                        height: AppDimensions.authSubmitButtonHeight,
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
+                      Center(
+                        child: CustomText(
+                          model: CustomTextModel(
+                            text: content.description,
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                              height: 1.45,
+                            ),
+                            fontSize: AppFontSize.small,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
-                    ),
-                ],
-              ),
+                      if (onGetStarted != null) ...[
+                        const SizedBox(height: AppDimensions.spacingSmall),
+                        CustomButton(
+                          model: CustomButtonModel(
+                            text: AppStrings.getStarted,
+                            onPressed: onGetStarted,
+                            width: double.infinity,
+                            height: AppDimensions.authSubmitButtonHeight,
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
+}
+
+class OnboardingWaveClipper extends CustomClipper<Path> {
+  const OnboardingWaveClipper();
+
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, size.height * 0.88);
+
+    // Smooth organic wave curve matching the reference design:
+    // Gently dips down on the left (~25-30% width) and gracefully sweeps up to the right.
+    path.cubicTo(
+      size.width * 0.24,
+      size.height * 1.09,
+      size.width * 0.58,
+      size.height * 0.98,
+      size.width,
+      size.height * 0.82,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

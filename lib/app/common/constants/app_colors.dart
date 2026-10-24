@@ -8,6 +8,7 @@ abstract final class AppColors {
   static const Color primarySoft = Color(0xFFFFF2F8);
   static const Color secondarySoft = Color(0xFFF5EFFA);
   static const Color createPostBackground = Color(0xFFFFFBFD);
+  static const Color placeholderBackground = Color(0xFFF5F5F5);
   static const List<Color> exploreBannerGradientColors = [
     Color.fromARGB(178, 193, 53, 132),
     Color(0x1AC13584),
